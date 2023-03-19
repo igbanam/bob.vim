@@ -1,0 +1,93 @@
+*bob.txt*	Bringing Bazel to Vim.
+
+Author: Igbanam Ogbuluijah
+For Vim version 8.2+
+
+==============================================================================
+CONTENTS~
+
+1. Overview					|bob-overview|
+2. Installation					|bob-installation|
+3. Usage					|bob-usage|
+4. Configuration				|bob-configuration|
+
+==============================================================================
+
+1. Overview					*bob-overview*
+
+Ever found yourself in a repository managed by Bazel and be completely stumped,
+you have to either go back into the command line, or — even worse — IntelliJ?
+Build on Bazel allows Vim feel™ like an IDE when in such repositories.
+
+The github repository for Building on Bazel is at
+
+      https://github.com/igbanam/bob.vim
+
+==============================================================================
+
+2. Installation					*bob-installation*
+
+To install this plugin use `vim-plug` or some other Vim plugin manager:
+>
+    Plug 'igbanam/bob.vim'
+<
+
+To install this plugin from the bob.vim.zip file, unzip the files to the
+~/.vim/pack/downloads/start/bob.vim directory:
+>
+    $ mkdir -p ~/.vim/pack/downloads/start/bob.vim
+    $ cd ~/.vim/pack/downloads/start/bob.vim
+    $ unzip ~/Downloads/bob.vim.zip
+<
+To install this plugin on Linux, MacOS and other Unix-like systems from
+Github:
+>
+    $ mkdir -p ~/.vim/pack/downloads/start
+    $ cd ~/.vim/pack/downloads/start
+    $ git clone https://github.com/igbanam/bob.vim
+<
+To install this plugin on MS-Windows from Github:
+>
+    C:\> mkdir %HOMEPATH%\vimfiles\pack\downloads\start
+    C:\> cd %HOMEPATH%\vimfiles\pack\downloads\start
+    C:\> git clone https://github.com/igbanam/bob.vim
+<
+To uninstall the plugin, remove the bob.vim directory from the
+$HOME/.vim/pack/downloads/start directory.
+
+==============================================================================
+
+3. Usage					*bob-usage*
+
+3.1. Build					*bob-build*
+
+This is the entry point for Bob. It searches for the build targets closest to
+the current file, and allows you select which one to build.
+
+Automatically, this is mapped to `<leader>bb`, but you can remap this to any
+key you like with
+
+>
+    map ?? <Plug>BobBuildNearest;
+<
+
+Depending on your |bob-selection-strategy|, you should be able to select the
+build target, or build the only target automatically.
+
+==============================================================================
+
+4. Configuration				*bob-configuration*
+
+4.1. Build Only Target				*bob-selection-strategy*
+
+When there's just one target closest to the file, automatically build this
+target instead of showing the pop-up for me to choose.
+
+Default: 0
+
+>
+    g:bob_selection_strategy = 1
+<
+==============================================================================
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
