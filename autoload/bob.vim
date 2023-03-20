@@ -32,7 +32,7 @@ var garbage = [
 ]
 
 def FindTargets(focus: string): list<string>
-  var targets = system('bazel query //' .. focus)->split('\n')
+  var targets = system('bazel query //' .. focus .. '/...')->split('\n')
   for _g in garbage
     targets->filter((i, v) => !v->trim()->StartsWith(_g))
   endfor
