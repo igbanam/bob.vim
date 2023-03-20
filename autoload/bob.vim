@@ -74,14 +74,24 @@ def BuildInteractive(targets: list<string>)
       }
     })
   else
-    call popup_menu(targets, {
-      title: SELECTION_TITLE,
-      callback: (_, chosen: number) => {
-        if chosen > 0
-          execute BUILD_COMMAND .. targets[chosen - 1]
-        endif
-      },
-    })
+  call popup_create(targets, {
+    title: SELECTION_TITLE,
+    pos: 'center',
+    zindex: 200,
+    drag: 1,
+    wrap: 0,
+    border: [],
+    cursorline: 1,
+    padding: [0, 1, 0, 1],
+    filter: 'popup_filter_menu',
+    mapping: 0,
+    borderchars: ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+    callback: (_, chosen: number) => {
+      if chosen > 0
+        execute BUILD_COMMAND .. targets[chosen - 1]
+      endif
+    },
+  })
   endif
 enddef
 
