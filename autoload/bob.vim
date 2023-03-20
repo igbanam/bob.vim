@@ -28,7 +28,8 @@ const BUILD_COMMAND = ':Dispatch bazel build '
 var garbage = [
   'Starting local Bazel server',
   'checking cached actions',
-  'Loading:'
+  'Loading:',
+  'INFO:'
 ]
 
 def FindTargets(focus: string): list<string>
