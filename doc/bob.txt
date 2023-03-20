@@ -74,6 +74,8 @@ key you like with
 Depending on your |bob-selection-strategy|, you should be able to select the
 build target, or build the only target automatically.
 
+BoB plays nicely with |fzf| and |dispatch|.
+
 ==============================================================================
 
 4. Configuration				*bob-configuration*

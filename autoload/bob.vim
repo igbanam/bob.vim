@@ -22,7 +22,11 @@ endif
 
 import autoload 'utils.vim'
 
+const SELECTION_TITLE = '[bob.vim] Select a build target'
+const BUILD_COMMAND = ':Dispatch bazel build '
+
 var garbage = [
+  'Starting local Bazel server',
   'checking cached actions',
   'Loading:'
 ]
@@ -57,18 +61,32 @@ def BuildWithSelectionStrategy(targets: list<string>, selection_strategy: number
 enddef
 
 def BuildInteractive(targets: list<string>)
-  call popup_menu(targets, {
-    title: 'BoB says: Choose a build target',
-    callback: (_, chosen: number) => {
-      if chosen > 0
-        execute ':Dispatch bazel build ' .. targets[chosen - 1]
-      endif
-    },
-  })
+  if exists('g:loaded_fzf')
+    call fzf#run({
+      source: targets,
+      window: {
+        'width': 0.9,
+        'height': 0.6,
+      },
+      options: '--border-label="┤ ' .. SELECTION_TITLE .. ' ├"',
+      sink: (chosen) => {
+        execute BUILD_COMMAND .. chosen
+      }
+    })
+  else
+    call popup_menu(targets, {
+      title: SELECTION_TITLE,
+      callback: (_, chosen: number) => {
+        if chosen > 0
+          execute BUILD_COMMAND .. targets[chosen - 1]
+        endif
+      },
+    })
+  endif
 enddef
 
 def BuildFirst(targets: list<string>)
-  execute ':Dispatch bazel build ' .. targets[0]
+  execute BUILD_COMMAND .. targets[0]
 enddef
 
 def StartsWith(longer: string, shorter: string): bool
