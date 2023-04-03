@@ -39,7 +39,7 @@ export def Build(focus: string)
 
   var targets = focus->FindTargets()
 
-  targets->BuildWithSelectionStrategy(utils.SelectionStrategy())
+  targets->WithSelectionStrategy(utils.SelectionStrategy(), ExecuteBuild)
 enddef
 
 export def Run(focus: string)
@@ -60,17 +60,17 @@ def FindTargets(focus: string): list<string>
   return targets
 enddef
 
-def BuildWithSelectionStrategy(targets: list<string>, selection_strategy: number)
+def WithSelectionStrategy(targets: list<string>, selection_strategy: number, To_Execute: func(string))
   if selection_strategy == 0
-    targets->BuildInteractive(ExecuteBuild)
+    targets->Interactive(To_Execute)
   elseif selection_strategy == 1
-    targets->BuildFirst(ExecuteBuild)
+    targets->First(To_Execute)
   else
     echom "BoB says: g:bob_build_only_target should be 0 or 1"
   endif
 enddef
 
-def BuildInteractive(targets: list<string>, To_Execute: func(string))
+def Interactive(targets: list<string>, To_Execute: func(string))
   if exists('g:loaded_fzf')
     call fzf#run({
       source: targets,
@@ -106,7 +106,7 @@ def BuildInteractive(targets: list<string>, To_Execute: func(string))
   endif
 enddef
 
-def BuildFirst(targets: list<string>, To_Executor: func(string))
+def First(targets: list<string>, To_Executor: func(string))
   targets[0]->To_Executor()
 enddef
 
