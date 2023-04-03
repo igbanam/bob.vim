@@ -4,7 +4,6 @@ vim9script
 #
 # File: bob.vim
 # Author: @igbanam, https://github.com/igbanam
-# Last Modified: Tuesday, 2nd March 2023
 #
 # License:   Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -24,20 +23,14 @@ import autoload 'utils.vim'
 
 const SELECTION_TITLE = '[bob.vim] Select a build target'
 const BUILD_COMMAND = ':Dispatch bazel build '
+const RUN_COMMAND = ':Dispatch bazel run '
 
 var garbage = [
   'Starting local Bazel server',
+  'Extracting Bazel installation...',
   'checking cached actions',
   'Loading:'
 ]
-
-def FindTargets(focus: string): list<string>
-  var targets = system('bazel query //' .. focus .. '/...')->split('\n')
-  for _g in garbage
-    targets->filter((i, v) => !v->trim()->StartsWith(_g))
-  endfor
-  return targets
-enddef
 
 export def Build(focus: string)
   if !focus->utils.IsBazelProject()
@@ -47,20 +40,39 @@ export def Build(focus: string)
 
   var targets = focus->FindTargets()
 
-  targets->BuildWithSelectionStrategy(utils.SelectionStrategy())
+  targets->WithSelectionStrategy(utils.SelectionStrategy(), ExecuteBuild)
 enddef
 
-def BuildWithSelectionStrategy(targets: list<string>, selection_strategy: number)
+export def Run(focus: string)
+  if !focus->utils.IsBazelProject()
+    echom "BoB says: This is not a Bazel project"
+    return
+  endif
+
+  var targets = focus->FindTargets()
+
+  targets->WithSelectionStrategy(utils.SelectionStrategy(), ExecuteRun)
+enddef
+
+def FindTargets(focus: string): list<string>
+  var targets = system('bazel query //' .. focus .. '/...')->split('\n')
+  for _g in garbage
+    targets->filter((i, v) => !v->trim()->StartsWith(_g))
+  endfor
+  return targets
+enddef
+
+def WithSelectionStrategy(targets: list<string>, selection_strategy: number, To_Execute: func(string))
   if selection_strategy == 0
-    targets->BuildInteractive()
+    targets->Interactive(To_Execute)
   elseif selection_strategy == 1
-    targets->BuildFirst()
+    targets->First(To_Execute)
   else
     echom "BoB says: g:bob_build_only_target should be 0 or 1"
   endif
 enddef
 
-def BuildInteractive(targets: list<string>)
+def Interactive(targets: list<string>, To_Execute: func(string))
   if exists('g:loaded_fzf')
     call fzf#run({
       source: targets,
@@ -70,7 +82,7 @@ def BuildInteractive(targets: list<string>)
       },
       options: '--border-label="┤ ' .. SELECTION_TITLE .. ' ├"',
       sink: (chosen) => {
-        execute BUILD_COMMAND .. chosen
+        chosen->To_Execute()
       }
     })
   else
@@ -88,15 +100,24 @@ def BuildInteractive(targets: list<string>)
     borderchars: ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
     callback: (_, chosen: number) => {
       if chosen > 0
-        execute BUILD_COMMAND .. targets[chosen - 1]
+        targets[chosen - 1]->To_Execute()
+        # execute BUILD_COMMAND .. targets[chosen - 1]
       endif
     },
   })
   endif
 enddef
 
-def BuildFirst(targets: list<string>)
-  execute BUILD_COMMAND .. targets[0]
+def First(targets: list<string>, To_Executor: func(string))
+  targets[0]->To_Executor()
+enddef
+
+def ExecuteBuild(target: string)
+  execute BUILD_COMMAND .. target
+enddef
+
+def ExecuteRun(target: string)
+  execute RUN_COMMAND .. target
 enddef
 
 def StartsWith(longer: string, shorter: string): bool

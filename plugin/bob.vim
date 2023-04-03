@@ -4,7 +4,6 @@ vim9script noclear
 #
 # File: bob.vim
 # Author: @igbanam, https://github.com/igbanam
-# Last Modified: Tuesday, 2nd March 2023
 #
 # License:   Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -33,4 +32,16 @@ noremap <SID>BuildNearest :call <SID>bob.Build(expand("%:h"))<cr>
 
 if !exists(":BobBuild")
   command -nargs=1  BobBuild  :call bob.Build(<q-args>)
+endif
+
+if !hasmapto('<Plug>RunNearest;')
+  map <unique> <leader>br <Plug>BobRunNearest;
+endif
+
+noremap <unique> <script> <Plug>BobRunNearest; <SID>RunNearest
+noremenu <script> Plugin.Run\ Nearest          <SID>RunNearest
+noremap <SID>RunNearest :call <SID>bob.Run(expand("%:h"))<cr>
+
+if !exists(":BobRun")
+  command -nargs=1  BobRun  :call bob.Run(<q-args>)
 endif
