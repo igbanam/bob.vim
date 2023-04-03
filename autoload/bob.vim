@@ -62,15 +62,15 @@ enddef
 
 def BuildWithSelectionStrategy(targets: list<string>, selection_strategy: number)
   if selection_strategy == 0
-    targets->BuildInteractive()
+    targets->BuildInteractive(ExecuteBuild)
   elseif selection_strategy == 1
-    targets->BuildFirst()
+    targets->BuildFirst(ExecuteBuild)
   else
     echom "BoB says: g:bob_build_only_target should be 0 or 1"
   endif
 enddef
 
-def BuildInteractive(targets: list<string>)
+def BuildInteractive(targets: list<string>, To_Execute: func(string))
   if exists('g:loaded_fzf')
     call fzf#run({
       source: targets,
@@ -80,7 +80,7 @@ def BuildInteractive(targets: list<string>)
       },
       options: '--border-label="┤ ' .. SELECTION_TITLE .. ' ├"',
       sink: (chosen) => {
-        execute BUILD_COMMAND .. chosen
+        chosen->To_Execute()
       }
     })
   else
@@ -98,15 +98,20 @@ def BuildInteractive(targets: list<string>)
     borderchars: ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
     callback: (_, chosen: number) => {
       if chosen > 0
-        execute BUILD_COMMAND .. targets[chosen - 1]
+        targets[chosen - 1]->To_Execute()
+        # execute BUILD_COMMAND .. targets[chosen - 1]
       endif
     },
   })
   endif
 enddef
 
-def BuildFirst(targets: list<string>)
-  execute BUILD_COMMAND .. targets[0]
+def BuildFirst(targets: list<string>, To_Executor: func(string))
+  targets[0]->To_Executor()
+enddef
+
+def ExecuteBuild(target: string)
+  execute BUILD_COMMAND .. target
 enddef
 
 def StartsWith(longer: string, shorter: string): bool
