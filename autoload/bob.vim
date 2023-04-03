@@ -31,14 +31,6 @@ var garbage = [
   'Loading:'
 ]
 
-def FindTargets(focus: string): list<string>
-  var targets = system('bazel query //' .. focus .. '/...')->split('\n')
-  for _g in garbage
-    targets->filter((i, v) => !v->trim()->StartsWith(_g))
-  endfor
-  return targets
-enddef
-
 export def Build(focus: string)
   if !focus->utils.IsBazelProject()
     echom "BoB says: This is not a Bazel project"
@@ -48,6 +40,24 @@ export def Build(focus: string)
   var targets = focus->FindTargets()
 
   targets->BuildWithSelectionStrategy(utils.SelectionStrategy())
+enddef
+
+export def Run(focus: string)
+  if !focus->utils.IsBazelProject()
+    echom "BoB says: This is not a Bazel project"
+    return
+  endif
+
+  var targets = focus->FindTargets()
+
+enddef
+
+def FindTargets(focus: string): list<string>
+  var targets = system('bazel query //' .. focus .. '/...')->split('\n')
+  for _g in garbage
+    targets->filter((i, v) => !v->trim()->StartsWith(_g))
+  endfor
+  return targets
 enddef
 
 def BuildWithSelectionStrategy(targets: list<string>, selection_strategy: number)
