@@ -23,6 +23,7 @@ import autoload 'utils.vim'
 
 const SELECTION_TITLE = '[bob.vim] Select a build target'
 const BUILD_COMMAND = ':Dispatch bazel build '
+const RUN_COMMAND = ':Dispatch bazel run '
 
 var garbage = [
   'Starting local Bazel server',
@@ -50,6 +51,7 @@ export def Run(focus: string)
 
   var targets = focus->FindTargets()
 
+  targets->WithSelectionStrategy(utils.SelectionStrategy(), ExecuteRun)
 enddef
 
 def FindTargets(focus: string): list<string>
@@ -112,6 +114,10 @@ enddef
 
 def ExecuteBuild(target: string)
   execute BUILD_COMMAND .. target
+enddef
+
+def ExecuteRun(target: string)
+  execute RUN_COMMAND .. target
 enddef
 
 def StartsWith(longer: string, shorter: string): bool
