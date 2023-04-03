@@ -4,7 +4,6 @@ vim9script noclear
 #
 # File: bob.vim
 # Author: @igbanam, https://github.com/igbanam
-# Last Modified: Tuesday, 2nd March 2023
 #
 # License:   Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
