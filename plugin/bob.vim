@@ -20,6 +20,18 @@ if exists("g:loaded_bob")
 endif
 g:loaded_bob = 1
 
+const REQUIRED = {
+  'dispatch': 'tpope/vim-dispatch',
+  'fzf': 'junegunn/fzf',
+}
+
+for [key, repo] in REQUIRED->items()
+  if (!exists('g:loaded_' .. key))
+    echom '[bob.vim] requires ' .. repo
+    finish
+  endif
+endfor
+
 import autoload 'bob.vim'
 
 if !hasmapto('<Plug>BuildNearest;')
