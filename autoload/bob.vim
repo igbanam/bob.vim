@@ -26,6 +26,7 @@ const BUILD_COMMAND = ':Dispatch bazel build '
 
 var garbage = [
   'Starting local Bazel server',
+  'Extracting Bazel installation...',
   'checking cached actions',
   'Loading:'
 ]
