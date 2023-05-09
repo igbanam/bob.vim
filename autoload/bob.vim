@@ -24,6 +24,10 @@ import autoload 'utils.vim'
 const SELECTION_TITLE = '[bob.vim] Select a build target'
 const BUILD_COMMAND = ':Dispatch bazel build '
 const RUN_COMMAND = ':Dispatch bazel run '
+const REQUIRED = {
+  ':Dispatch': 'tpope/vim-dispatch',
+}
+
 
 var garbage = [
   'Starting local Bazel server',
@@ -113,11 +117,19 @@ def First(targets: list<string>, To_Executor: func(string))
 enddef
 
 def ExecuteBuild(target: string)
-  execute BUILD_COMMAND .. target
+  if exists(':Dispatch')
+    execute BUILD_COMMAND .. target
+  else
+    echom '[bob.vim] requires ' .. REQUIRED->get(':Dispatch')
+  endif
 enddef
 
 def ExecuteRun(target: string)
-  execute RUN_COMMAND .. target
+  if exists(':Dispatch')
+    execute RUN_COMMAND .. target
+  else
+    echom '[bob.vim] requires ' .. REQUIRED->get(':Dispatch')
+  endif
 enddef
 
 def StartsWith(longer: string, shorter: string): bool
