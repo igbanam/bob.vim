@@ -105,7 +105,6 @@ def Interactive(targets: list<string>, To_Execute: func(string))
     callback: (_, chosen: number) => {
       if chosen > 0
         targets[chosen - 1]->To_Execute()
-        # execute BUILD_COMMAND .. targets[chosen - 1]
       endif
     },
   })
